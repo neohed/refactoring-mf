@@ -1,0 +1,24 @@
+{
+  "name": "refactoring-mf",
+  "version": "1.0.0",
+  "description": "Code from Refactoring second edition",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neohed/refactoring-mf.git"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "refactoring"
+  ],
+  "author": "neohed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neohed/refactoring-mf/issues"
+  },
+  "homepage": "https://github.com/neohed/refactoring-mf#readme"
+}
