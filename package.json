@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/neohed/refactoring-mf#readme",
   "devDependencies": {
+    "ts-node": "^10.7.0",
+    "tsconfig-paths": "^3.14.1",
     "typescript": "^4.6.3"
   }
 }
