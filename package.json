@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/neohed/refactoring-mf/issues"
   },
-  "homepage": "https://github.com/neohed/refactoring-mf#readme"
+  "homepage": "https://github.com/neohed/refactoring-mf#readme",
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  }
 }
