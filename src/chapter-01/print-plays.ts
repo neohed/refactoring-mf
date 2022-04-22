@@ -45,4 +45,6 @@ function statement (invoice, plays) {
     return result;
 }
 
-invoices.forEach(invoice => console.log(statement(invoice, plays)))
+module.exports = function execute() {
+    invoices.forEach(invoice => console.log(statement(invoice, plays)))
+}
