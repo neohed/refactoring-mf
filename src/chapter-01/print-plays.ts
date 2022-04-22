@@ -45,4 +45,4 @@ function statement (invoice, plays) {
     return result;
 }
 
-statement(invoices, plays)
+invoices.forEach(invoice => console.log(statement(invoice, plays)))
