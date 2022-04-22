@@ -1,7 +1,31 @@
-import type {Invoice} from './invoices';
-import type {Plays} from './plays';
+import type {Invoice, Performance} from './invoices';
+import type {Plays, Play} from './plays';
 import invoice_data from './invoices';
 import play_data from './plays';
+
+function amountFor(perf: Performance, play: Play): number {
+  let thisAmount = 0;
+
+  switch (play.type) {
+    case 'tragedy':
+      thisAmount = 40000;
+      if (perf.audience > 30) {
+        thisAmount += 1000 * (perf.audience - 30);
+      }
+      break;
+    case 'comedy':
+      thisAmount = 30000;
+      if (perf.audience > 20) {
+        thisAmount += 10000 + 500 * (perf.audience - 20);
+      }
+      thisAmount += 300 * perf.audience;
+      break;
+    default:
+      throw new Error(`unknown type: ${play.type}`);
+  }
+
+  return thisAmount
+}
 
 function statement(invoice: Invoice, plays: Plays): string {
   let totalAmount = 0;
@@ -17,25 +41,7 @@ function statement(invoice: Invoice, plays: Plays): string {
 
   invoice.performances.forEach(perf => {
     const play = plays[perf.playID];
-    let thisAmount = 0;
-
-    switch (play.type) {
-      case 'tragedy':
-        thisAmount = 40000;
-        if (perf.audience > 30) {
-          thisAmount += 1000 * (perf.audience - 30);
-        }
-        break;
-      case 'comedy':
-        thisAmount = 30000;
-        if (perf.audience > 20) {
-          thisAmount += 10000 + 500 * (perf.audience - 20);
-        }
-        thisAmount += 300 * perf.audience;
-        break;
-      default:
-        throw new Error(`unknown type: ${play.type}`);
-    }
+    const thisAmount = amountFor(perf, play);
 
     // add volume credits
     volumeCredits += Math.max(perf.audience - 30, 0);

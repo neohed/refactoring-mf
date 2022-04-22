@@ -1,4 +1,4 @@
-interface Play {
+export interface Play {
   name: string;
   type: string;
 }
