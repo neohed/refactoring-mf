@@ -1,3 +1,3 @@
-const execute = require('./chapter-01/print-plays');
+import execute from './chapter-01/print-plays';
 
 execute();
