@@ -1,5 +1,7 @@
 import {Invoice, Performance} from './invoices';
 import {Play, Plays} from './plays';
+import TragedyCalculator from './TragedyCalculator';
+import ComedyCalculator from './ComedyCalculator';
 
 type PerformancePlus = Performance & {
   play: Play,
@@ -14,47 +16,20 @@ export type TempData = {
   totalVolumeCredits: number,
 }
 
-class PerformanceCalculator {
-  private performance: Performance;
-
-  constructor(aPerformance) {
-    this.performance = aPerformance
+function createPerformanceCalculator(aPerformance: Performance, aPlay: Play) {
+  switch (aPlay.type) {
+    case 'tragedy':
+      return new TragedyCalculator(aPerformance, aPlay);
+    case 'comedy':
+      return new ComedyCalculator(aPerformance, aPlay);
+    default:
+      throw new Error(`unknown type: ${aPlay.type}`)
   }
 }
 
 export default function createStatementData(invoice: Invoice, plays: Plays): TempData {
   function playFor(aPerformance: Performance): Play {
     return plays[aPerformance.playID]
-  }
-
-  function amountFor(aPerformance: Performance, play: Play): number {
-    let result = 0;
-
-    switch (play.type) {
-      case 'tragedy':
-        result = 40000;
-        if (aPerformance.audience > 30) {
-          result += 1000 * (aPerformance.audience - 30);
-        }
-        break;
-      case 'comedy':
-        result = 30000;
-        if (aPerformance.audience > 20) {
-          result += 10000 + 500 * (aPerformance.audience - 20);
-        }
-        result += 300 * aPerformance.audience;
-        break;
-      default:
-        throw new Error(`unknown type: ${play.type}`);
-    }
-
-    return result
-  }
-
-  function volumeCreditsFor(aPerformance: Performance): number {
-    let result = Math.max(aPerformance.audience - 30, 0);
-    if (playFor(aPerformance).type === 'comedy') result += Math.floor(aPerformance.audience / 5);
-    return result
   }
 
   function totalAmount(performances: PerformancePlus[]): number {
@@ -70,13 +45,13 @@ export default function createStatementData(invoice: Invoice, plays: Plays): Tem
   }
 
   function enrichPerformance(aPerformance: Performance): PerformancePlus {
-    // A fucking hack...? or MF is a cunt!
-    const play = playFor(aPerformance);
+    const calculator = createPerformanceCalculator(aPerformance, playFor(aPerformance));
+
     return {
       ...aPerformance,
-      play,
-      amount: amountFor(aPerformance, play),
-      volumeCredits: volumeCreditsFor(aPerformance),
+      play: calculator.play,
+      amount: calculator.amount,
+      volumeCredits: calculator.volumeCredits,
     }
   }
 

@@ -1,6 +1,6 @@
 import {statement, htmlStatement} from './chapter-01/print-plays';
-import invoice_data from "./chapter-01/invoices";
-import play_data from "./chapter-01/plays";
+import invoice_data from './chapter-01/invoices';
+import play_data from './chapter-01/plays';
 
 invoice_data.forEach(
   invoice => {

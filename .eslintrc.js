@@ -25,5 +25,6 @@ module.exports = {
     'function-paren-newline': 'off',
     'arrow-parens': 'off',
     '@typescript-eslint/semi': 'off',
+    'class-methods-use-this': 'off',
   },
 };
