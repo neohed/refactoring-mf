@@ -14,6 +14,14 @@ export type TempData = {
   totalVolumeCredits: number,
 }
 
+class PerformanceCalculator {
+  private performance: Performance;
+
+  constructor(aPerformance) {
+    this.performance = aPerformance
+  }
+}
+
 export default function createStatementData(invoice: Invoice, plays: Plays): TempData {
   function playFor(aPerformance: Performance): Play {
     return plays[aPerformance.playID]
@@ -44,8 +52,7 @@ export default function createStatementData(invoice: Invoice, plays: Plays): Tem
   }
 
   function volumeCreditsFor(aPerformance: Performance): number {
-    let result = 0;
-    result += Math.max(aPerformance.audience - 30, 0);
+    let result = Math.max(aPerformance.audience - 30, 0);
     if (playFor(aPerformance).type === 'comedy') result += Math.floor(aPerformance.audience / 5);
     return result
   }
@@ -59,12 +66,7 @@ export default function createStatementData(invoice: Invoice, plays: Plays): Tem
   }
 
   function totalVolumeCredits(performances: PerformancePlus[]): number {
-    let result = 0;
-    performances.forEach(perf => {
-      // add volume credits
-      result += perf.volumeCredits;
-    })
-    return result
+    return performances.reduce((total, {volumeCredits}) => total + volumeCredits, 0)
   }
 
   function enrichPerformance(aPerformance: Performance): PerformancePlus {
