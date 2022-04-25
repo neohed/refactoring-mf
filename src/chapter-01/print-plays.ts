@@ -2,8 +2,6 @@ import type {Invoice} from './invoices';
 import type {Plays} from './plays';
 import type {TempData} from './createStatementData';
 import createStatementData from './createStatementData';
-import invoice_data from './invoices';
-import play_data from './plays';
 
 function usd(aNumber: number): string {
   return new Intl.NumberFormat(
@@ -27,7 +25,7 @@ function renderPlainText(data: TempData): string {
   return result;
 }
 
-function statement(invoice: Invoice, plays: Plays): string {
+export function statement(invoice: Invoice, plays: Plays): string {
   return renderPlainText(createStatementData(invoice, plays))
 }
 
@@ -48,10 +46,6 @@ function renderHtml(data: TempData): string {
   return result;
 }
 
-function htmlStatement(invoice: Invoice, plays: Plays): string {
+export function htmlStatement(invoice: Invoice, plays: Plays): string {
   return renderHtml(createStatementData(invoice, plays))
-}
-
-export default function execute() {
-  invoice_data.forEach(invoice => console.log(statement(invoice, play_data)))
 }
