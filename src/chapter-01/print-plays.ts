@@ -1,61 +1,55 @@
-import type {Invoice, Performance} from './invoices';
-import type {Plays, Play} from './plays';
+import type {Invoice} from './invoices';
+import type {Plays} from './plays';
+import type {TempData} from './createStatementData';
+import createStatementData from './createStatementData';
 import invoice_data from './invoices';
 import play_data from './plays';
 
-function amountFor(perf: Performance, play: Play): number {
-  let thisAmount = 0;
-
-  switch (play.type) {
-    case 'tragedy':
-      thisAmount = 40000;
-      if (perf.audience > 30) {
-        thisAmount += 1000 * (perf.audience - 30);
-      }
-      break;
-    case 'comedy':
-      thisAmount = 30000;
-      if (perf.audience > 20) {
-        thisAmount += 10000 + 500 * (perf.audience - 20);
-      }
-      thisAmount += 300 * perf.audience;
-      break;
-    default:
-      throw new Error(`unknown type: ${play.type}`);
-  }
-
-  return thisAmount
-}
-
-function statement(invoice: Invoice, plays: Plays): string {
-  let totalAmount = 0;
-  let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`;
-  const {format} = new Intl.NumberFormat(
+function usd(aNumber: number): string {
+  return new Intl.NumberFormat(
     'en-US',
     {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2
-    });
+    }).format(aNumber)
+}
 
-  invoice.performances.forEach(perf => {
-    const play = plays[perf.playID];
-    const thisAmount = amountFor(perf, play);
+function renderPlainText(data: TempData): string {
+  let result = `Statement for ${data.customer}\n`;
 
-    // add volume credits
-    volumeCredits += Math.max(perf.audience - 30, 0);
-    // add extra credit for every ten comedy attendees
-    if (play.type === 'comedy') volumeCredits += Math.floor(perf.audience / 5);
-
-    // print line for this order
-    result += `  ${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
-    totalAmount += thisAmount;
+  data.performances.forEach(perf => {
+    result += `  ${perf.play.name}: ${usd(perf.amount / 100)} (${perf.audience} seats)\n`;
   })
 
-  result += `Amount owed is ${format(totalAmount / 100)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
+  result += `Amount owed is ${usd(data.totalAmount / 100)}\n`;
+  result += `You earned ${data.totalVolumeCredits} credits\n`;
   return result;
+}
+
+function statement(invoice: Invoice, plays: Plays): string {
+  return renderPlainText(createStatementData(invoice, plays))
+}
+
+function renderHtml(data: TempData): string {
+  let result = `
+<h1>Statement for ${data.customer}</h1>
+<table>
+<tr><th>play</th><th>seats</th><th>cost</th></tr>
+`;
+
+  data.performances.forEach(perf => {
+    result += `<tr><td>${perf.play.name}</td><td>(${perf.audience} seats)</td><td>${usd(perf.amount / 100)}</td></tr>`;
+  })
+
+  result += '</table>';
+  result += `<p>Amount owed is ${usd(data.totalAmount / 100)}</p>`;
+  result += `<p>You earned ${data.totalVolumeCredits} credits</p>`;
+  return result;
+}
+
+function htmlStatement(invoice: Invoice, plays: Plays): string {
+  return renderHtml(createStatementData(invoice, plays))
 }
 
 export default function execute() {
