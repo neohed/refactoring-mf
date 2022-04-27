@@ -55,7 +55,6 @@ export default function createStatementData(invoice: Invoice, plays: Plays): Tem
     }
   }
 
-  // A fucking hack...? or MF is a cunt!
   const performances = invoice.performances.map(enrichPerformance);
   return {
     performances,
