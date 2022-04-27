@@ -56,6 +56,7 @@ export default function createStatementData(invoice: Invoice, plays: Plays): Tem
   }
 
   const performances = invoice.performances.map(enrichPerformance);
+
   return {
     performances,
     customer: invoice.customer,
